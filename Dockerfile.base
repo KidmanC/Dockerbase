@@ -9,8 +9,15 @@ WORKDIR /benchmarks
 # Clonar el repositorio con los benchmarks
 RUN git clone https://github.com/KidmanC/Docker .
 
-# Listar contenido para debug
-RUN ls -la
-
 # Script de entrada
-CMD ["sh", "-c", "dockerd & sleep 5 && cd /benchmarks && ls -la && chmod +x ./run-benchmarks.sh && ./run-benchmarks.sh"]
+CMD ["sh", "-c", "\
+    # Iniciar el daemon de Docker\
+    dockerd & \
+    # Esperar a que el daemon esté listo\
+    until docker info > /dev/null 2>&1; do \
+        echo 'Esperando que el daemon de Docker esté disponible...' && \
+        sleep 1; \
+    done && \
+    echo 'Daemon de Docker listo' && \
+    chmod +x run-benchmarks.sh && \
+    ./run-benchmarks.sh"]
