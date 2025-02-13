@@ -10,4 +10,4 @@ WORKDIR /benchmarks
 RUN git clone https://github.com/KidmanC/Dockerfile .
 
 # Script de entrada
-CMD ["sh", "-c", "dockerd & sleep 5 && cd Dockerfile && chmod +x run-benchmark.sh && ./run-benchmark.sh"]
+CMD ["sh", "-c", "dockerd & sleep 5 && chmod +x run-benchmark.sh && ./run-benchmark.sh"]
