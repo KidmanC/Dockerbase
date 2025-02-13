@@ -1,23 +1,29 @@
 FROM docker:dind
 
-# Instalar git y otras herramientas necesarias
-RUN apk add --no-cache git bash
+# Instalar herramientas necesarias
+RUN apk add --no-cache \
+    git \
+    bash \
+    python3 \
+    openjdk17 \
+    nodejs \
+    npm \
+    rust \
+    cargo
 
 # Establecer el directorio de trabajo
-WORKDIR /benchmarks
+WORKDIR /app
 
-# Clonar el repositorio con los benchmarks
-RUN git clone https://github.com/KidmanC/Docker .
+# Copiar el script de benchmark
+COPY run-benchmarks.sh .
+RUN chmod +x run-benchmarks.sh
 
 # Script de entrada
 CMD ["sh", "-c", "\
     # Iniciar el daemon de Docker\
     dockerd & \
-    # Esperar a que el daemon esté listo\
-    until docker info > /dev/null 2>&1; do \
-        echo 'Esperando que el daemon de Docker esté disponible...' && \
-        sleep 1; \
-    done && \
-    echo 'Daemon de Docker listo' && \
-    chmod +x run-benchmarks.sh && \
-    ./run-benchmarks.sh"]
+    echo 'Esperando que el daemon de Docker esté disponible...' && \
+    until docker info > /dev/null 2>&1; do sleep 1; done && \
+    echo 'Docker está listo' && \
+    ./run-benchmarks.sh\
+"]
