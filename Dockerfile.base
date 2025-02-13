@@ -1,0 +1,17 @@
+# Dockerfile.base
+FROM docker:dind
+
+# Instalar git y otras herramientas necesarias
+RUN apk add --no-cache git bash
+
+# Establecer el directorio de trabajo
+WORKDIR /benchmarks
+
+# Copiar el script de benchmark
+COPY run-benchmark.sh .
+
+# Script de entrada
+CMD ["sh", "-c", "dockerd & sleep 5 && \
+    git clone https://github.com/KidmanC/Dockerfile . && \
+    chmod +x run-benchmark.sh && \
+    ./run-benchmark.sh"]
