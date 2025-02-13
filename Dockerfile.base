@@ -7,7 +7,10 @@ RUN apk add --no-cache git bash
 WORKDIR /benchmarks
 
 # Clonar el repositorio con los benchmarks
-RUN git clone https://github.com/KidmanC/Dockerfile .
+RUN git clone https://github.com/KidmanC/Docker .
+
+# Listar contenido para debug
+RUN ls -la
 
 # Script de entrada
-CMD ["sh", "-c", "dockerd & sleep 5 && chmod +x run-benchmark.sh && ./run-benchmark.sh"]
+CMD ["sh", "-c", "dockerd & sleep 5 && cd /benchmarks && ls -la && chmod +x ./run-benchmarks.sh && ./run-benchmarks.sh"]
