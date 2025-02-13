@@ -28,7 +28,7 @@ done\n\
 echo "Docker está listo"\n\
 \n\
 # Clonar el repositorio\n\
-git clone https://github.com/KidmanC/DockerFile .\n\
+git clone https://github.com/KidmanC/Docker .\n\
 \n\
 # Ejecutar el benchmark\n\
 chmod +x run-benchmarks.sh\n\
