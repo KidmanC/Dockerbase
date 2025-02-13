@@ -22,7 +22,7 @@ CMD ["sh", "-c", "\
     until docker info > /dev/null 2>&1; do sleep 1; done && \
     echo 'Docker está listo' && \
     # Clonar el repositorio con los benchmarks\
-    git clone https://github.com/KidmanC/DockerFile . && \
+    git clone https://github.com/KidmanC/Docker . && \
     # Ejecutar el benchmark\
     chmod +x run-benchmarks.sh && \
     ./run-benchmarks.sh\
