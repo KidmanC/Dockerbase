@@ -14,16 +14,29 @@ RUN apk add --no-cache \
 # Establecer el directorio de trabajo
 WORKDIR /app
 
-# Script de entrada que clonará el repositorio y ejecutará el benchmark
-CMD ["sh", "-c", "\
-    # Iniciar el daemon de Docker\
-    dockerd & \
-    echo 'Esperando que el daemon de Docker esté disponible...' && \
-    until docker info > /dev/null 2>&1; do sleep 1; done && \
-    echo 'Docker está listo' && \
-    # Clonar el repositorio con los benchmarks\
-    git clone https://github.com/KidmanC/Docker . && \
-    # Ejecutar el benchmark\
-    chmod +x run-benchmarks.sh && \
-    ./run-benchmarks.sh\
-"]
+# Crear script de inicialización
+RUN echo '#!/bin/sh\n\
+# Iniciar dockerd en segundo plano\n\
+dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 &\n\
+\n\
+# Esperar a que el daemon esté disponible\n\
+echo "Esperando al daemon de Docker..."\n\
+while ! docker info >/dev/null 2>&1; do\n\
+    sleep 1\n\
+done\n\
+\n\
+echo "Docker está listo"\n\
+\n\
+# Clonar el repositorio\n\
+git clone https://github.com/KidmanC/DockerFile .\n\
+\n\
+# Ejecutar el benchmark\n\
+chmod +x run-benchmarks.sh\n\
+./run-benchmarks.sh\n\
+\n\
+# Mantener el contenedor corriendo\n\
+tail -f /dev/null' > /entrypoint.sh && \
+    chmod +x /entrypoint.sh
+
+# Usar el script de entrada
+ENTRYPOINT ["/entrypoint.sh"]
