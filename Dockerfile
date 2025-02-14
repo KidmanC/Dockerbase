@@ -10,7 +10,7 @@ RUN apt-get update && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 # Clona el primer repositorio
-RUN git clone <URL_DEL_PRIMER_REPOSITORIO> /app
+RUN git clone https://github.com/KidmanC/Docker /app
 
 # Establece el directorio de trabajo
 WORKDIR /app
