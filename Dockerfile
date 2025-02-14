@@ -1,42 +1,22 @@
-FROM docker:dind
+# Usa una imagen base que tenga soporte para múltiples lenguajes
+FROM ubuntu:latest
 
-# Instalar herramientas necesarias
-RUN apk add --no-cache \
-    git \
-    bash \
-    python3 \
-    openjdk17 \
-    nodejs \
-    npm \
-    rust \
-    cargo
+# Instala las dependencias necesarias
+RUN apt-get update && \
+    apt-get install -y python3 openjdk-11-jdk nodejs npm \
+    git curl && \
+    curl -s https://get.sdkman.io | bash && \
+    bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install kotlin" && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-# Establecer el directorio de trabajo
+# Clona el primer repositorio
+RUN git clone <URL_DEL_PRIMER_REPOSITORIO> /app
+
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Crear script de inicialización
-RUN echo '#!/bin/sh\n\
-# Iniciar dockerd en segundo plano\n\
-dockerd --host=unix:///var/run/docker.sock --host=tcp://0.0.0.0:2375 &\n\
-\n\
-# Esperar a que el daemon esté disponible\n\
-echo "Esperando al daemon de Docker..."\n\
-while ! docker info >/dev/null 2>&1; do\n\
-    sleep 1\n\
-done\n\
-\n\
-echo "Docker está listo"\n\
-\n\
-# Clonar el repositorio\n\
-git clone https://github.com/KidmanC/Docker .\n\
-\n\
-# Ejecutar el benchmark\n\
-chmod +x run-benchmarks.sh\n\
-./run-benchmarks.sh\n\
-\n\
-# Mantener el contenedor corriendo\n\
-tail -f /dev/null' > /entrypoint.sh && \
-    chmod +x /entrypoint.sh
+# Da permisos de ejecución al script
+RUN chmod +x run-benchmarks.sh
 
-# Usar el script de entrada
-ENTRYPOINT ["/entrypoint.sh"]
+# Ejecuta el script al iniciar el contenedor
+CMD ["./run-benchmarks.sh"]
